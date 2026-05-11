@@ -675,6 +675,10 @@ class Scan2021(Scan5Point3):
     """ ScanImage 2021"""
     pass
 
+class Scan2022(Scan5Point3):
+    """ ScanImage 2022"""
+    pass
+
 
 class ScanMultiROI(NewerScan, BaseScan):
     """An extension of ScanImage v5 that manages multiROI data (output from mesoscope).
