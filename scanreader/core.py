@@ -35,6 +35,7 @@ _scans = {
     "2019b": scans.Scan2019b,
     "2020": scans.Scan2020,
     "2021": scans.Scan2021,
+    "2022": scans.Scan2022,
     "2023": scans.Scan2023,
 }
 
@@ -64,6 +65,7 @@ def read_scan(pathnames, dtype=np.int16, join_contiguous=False):
     version = get_scanimage_version(file_info)
 
     # Select the appropriate scan object
+    post2023_header = version == "2023" or uses_post2023_header(file_info)
     if version in [
         "2016b",
         "2017a",
@@ -74,12 +76,15 @@ def read_scan(pathnames, dtype=np.int16, join_contiguous=False):
         "2019b",
         "2020",
         "2021",
+        "2022",
+        "2023",
     ] and is_scan_multiROI(file_info):
-        scan = scans.ScanMultiROI(join_contiguous=join_contiguous)
-    elif version == "2023" and is_scan_multiROI(file_info):
-        scan = scans.ScanMultiROIPost2023(join_contiguous=join_contiguous)
+        if post2023_header:
+            scan = scans.ScanMultiROIPost2023(join_contiguous=join_contiguous)
+        else:
+            scan = scans.ScanMultiROI(join_contiguous=join_contiguous)
     elif version in _scans:
-        scan = _scans[version]()
+        scan = scans.Scan2023() if post2023_header else _scans[version]()
     else:
         error_msg = f"Sorry, ScanImage version {version} is not supported"
         raise ScanImageVersionError(error_msg)
@@ -155,3 +160,21 @@ def is_scan_multiROI(info):
     match = re.search(r"hRoiManager\.mroiEnable = (?P<is_multiROI>.)", info)
     is_multiROI = (match.group("is_multiROI") == "1") if match else None
     return is_multiROI
+
+
+def uses_post2023_header(info):
+    """Looks whether the tiff file headers use the field names read by NewerScanPost2023.
+
+    ScanImage moved numVolumes to hStackManager and renamed hMotors.motorPosition to
+    samplePosition before 2023 (SI 2021.0 and 2022.1 headers already use them), so
+    the header layout can not be told from the version alone.
+
+    Args:
+        info: A string. All headers from tiff tags.
+
+    Returns:
+        A bool. Whether the header uses the post-2023 field names.
+    """
+    return bool(
+        re.search(r"hStackManager\.numVolumes = |hMotors\.samplePosition = ", info)
+    )

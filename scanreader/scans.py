@@ -21,6 +21,8 @@ BaseScan
                 Scan2019a
                 Scan2019b
                 Scan2020
+                Scan2021
+                Scan2022
                 Scan2023 (+ NewerScanPost2023)
     ScanMultiRoi
         ScanMultiROIPost2023 (+ NewerScanPost2023)
@@ -716,7 +718,7 @@ class NewerScan:
 
 
 class NewerScanPost2023:
-    """Header field changes introduced in ScanImage 2023."""
+    """Header field changes seen in ScanImage 2023 (and in some 2021 and 2022 headers)."""
 
     @property
     def num_requested_frames(self):
@@ -842,10 +844,14 @@ class Scan2021(Scan5Point3):
     """ScanImage 2021"""
 
 
+class Scan2022(Scan5Point3):
+    """ScanImage 2022"""
+
+
 class Scan2023(
     NewerScanPost2023, Scan5Point3
 ):  # NewerScanPost2023 first to shadow Scan5Point3's properties
-    """ScanImage 2023"""
+    """ScanImage 2023, or any version whose header uses the post-2023 field names."""
 
 
 class ScanMultiROI(NewerScan, BaseScan):
@@ -1126,7 +1132,7 @@ class ScanMultiROI(NewerScan, BaseScan):
 class ScanMultiROIPost2023(
     NewerScanPost2023, ScanMultiROI
 ):  # NewerScanPost2023 first to shadow ScanMultiROI's properties
-    """multiROI scan recorded with ScanImage 2023."""
+    """multiROI scan whose header uses the post-2023 field names (ScanImage 2021+)."""
 
     def _read_roi_infos(self):
         """Read RoiGroups from the TIFF Artist tag (315) rather than from
