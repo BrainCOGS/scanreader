@@ -669,8 +669,6 @@ class BaseScan5(BaseScan):
 class Scan5Point1(BaseScan5):
     """ScanImage 5.1. Basic."""
 
-    pass
-
 
 class Scan5Point2(BaseScan5):
     """ScanImage 5.2. Addition of FOV measures in microns."""
@@ -719,91 +717,61 @@ class Scan5Point3(
 ):  # NewerScan first to shadow Scan5Point2's properties
     """ScanImage 5.3"""
 
-    pass
-
 
 class Scan5Point4(Scan5Point3):
     """ScanImage 5.4"""
-
-    pass
 
 
 class Scan5Point5(Scan5Point3):
     """ScanImage 5.5"""
 
-    pass
-
 
 class Scan5Point6(Scan5Point3):
     """ScanImage 5.6"""
-
-    pass
 
 
 class Scan5Point7(Scan5Point3):
     """ScanImage 5.7"""
 
-    pass
-
 
 class Scan2016b(Scan5Point3):
     """ScanImage 2016b"""
-
-    pass
 
 
 class Scan2017a(Scan5Point3):
     """ScanImage 2017a"""
 
-    pass
-
 
 class Scan2017b(Scan5Point3):
     """ScanImage 2017b"""
-
-    pass
 
 
 class Scan2018a(Scan5Point3):
     """ScanImage 2018a"""
 
-    pass
-
 
 class Scan2018b(Scan5Point3):
     """ScanImage 2018b"""
-
-    pass
 
 
 class Scan2019a(Scan5Point3):
     """ScanImage 2019a"""
 
-    pass
-
 
 class Scan2019b(Scan5Point3):
     """ScanImage 2019b"""
-
-    pass
 
 
 class Scan2020(Scan5Point3):
     """ScanImage 2020"""
 
-    pass
-
 
 class Scan2021(Scan5Point3):
     """ScanImage 2021"""
 
-    pass
-
 
 class Scan2022(Scan5Point3):
     """ScanImage 2022"""
-
-    pass
 
 
 class ScanMultiROI(NewerScan, BaseScan):

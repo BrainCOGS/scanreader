@@ -741,7 +741,7 @@ class StackTest(TestCase):
         self.assertEqual(scan.num_rois, 4)
         self.assertEqual(scan.field_heights, [360] * 204)
         self.assertEqual(scan.field_widths, [120] * 204)
-        self.assertEqual(scan.field_slices, list(np.repeat(range(0, 51), 4)))
+        self.assertEqual(scan.field_slices, list(np.repeat(range(51), 4)))
         self.assertEqual(scan.field_rois, [[0], [1], [2], [3]] * 51)
         roi_masks = [np.full([360, 120], i, dtype=np.int8) for i in range(4)]
         for i in range(204):  # for each field
