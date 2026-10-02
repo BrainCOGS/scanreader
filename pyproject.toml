@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scanreader"
+version = "0.4.12"
+description = "Reader for ScanImage 5 scans (including slow stacks and multiROI)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Erick Cobos", email = "ecobos@bcm.edu" }]
+keywords = ["ScanImage", "scanreader", "multiROI", "2016b", "tiff"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = ["numpy>=1.12.0", "tifffile>=2019.2.22"]
+
+[project.urls]
+Homepage = "https://github.com/atlab/scanreader"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.setuptools]
+packages = ["scanreader"]
+
+[tool.uv]
+# Supply-chain quarantine: ignore anything published in the last 7 days when
+# resolving. A compromised release is usually caught and yanked within days, so
+# waiting a week costs little and skips the window when a malicious version is
+# most likely to still be up. uv re-evaluates this relative value on every
+# resolution, so the window rolls forward on its own. "7 days" is the documented
+# friendly-duration form (ISO 8601 "P7D" is equivalent).
+#
+# Consequence to expect: immediately after an upstream release, `uv lock` will
+# decline to pick it up until it is a week old. That is the feature working. To
+# take a fresh release deliberately, run
+#   uv lock --exclude-newer <a timestamp after that upload>
+# or add a scoped exemption via `exclude-newer-package`.
+exclude-newer = "7 days"
+
+# `uv audit` is still gated behind a preview flag. Declaring it here means the
+# command runs without `--preview-features audit-command` on the command line.
+preview-features = ["audit-command"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = ["-ra", "--strict-config", "--strict-markers"]
+# test_scanreader.py at the repo root is the legacy nose2 suite and needs large
+# TIFF files that are not in the repo; only collect the tests/ directory.
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+# Existing code is not consistently wrapped; keep ruff's default width.
+line-length = 88
+extend-exclude = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
+ignore = [
+    # zip() without strict= : adding strict= would change runtime behavior
+    # (raise on length mismatch) in code that currently truncates silently.
+    "B905",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Re-export of the public API.
+"scanreader/__init__.py" = ["F401"]
+# Lambda defined in a loop but consumed within the same iteration (so the
+# late binding is harmless); unused enumerate index in a loop.
+"scanreader/scans.py" = ["E731", "B023", "B007"]
+# Legacy nose2 suite: unused enumerate indices.
+"test_scanreader.py" = ["B007"]
