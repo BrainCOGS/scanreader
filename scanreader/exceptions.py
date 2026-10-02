@@ -1,15 +1,14 @@
 class ScanReaderException(Exception):
-    """Base ScanReader exception. """
-    pass
+    """Base ScanReader exception."""
+
 
 class ScanImageVersionError(ScanReaderException):
-    """ Exception for unsupported ScanImage versions."""
-    pass
+    """Exception for unsupported ScanImage versions."""
+
 
 class PathnameError(ScanReaderException):
-    """ Exception for dealing with paths and pathname patterns (wildcards)."""
-    pass
+    """Exception for dealing with paths and pathname patterns (wildcards)."""
+
 
 class FieldDimensionMismatch(ScanReaderException):
-    """ Exception for trying to slice an array with fields of different dimensions."""
-    pass
+    """Exception for trying to slice an array with fields of different dimensions."""
