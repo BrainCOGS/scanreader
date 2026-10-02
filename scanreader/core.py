@@ -35,7 +35,7 @@ _scans = {
     "2019b": scans.Scan2019b,
     "2020": scans.Scan2020,
     "2021": scans.Scan2021,
-    "2022": scans.Scan2022,
+    "2023": scans.Scan2023,
 }
 
 
@@ -64,7 +64,6 @@ def read_scan(pathnames, dtype=np.int16, join_contiguous=False):
     version = get_scanimage_version(file_info)
 
     # Select the appropriate scan object
-
     if version in [
         "2016b",
         "2017a",
@@ -75,9 +74,10 @@ def read_scan(pathnames, dtype=np.int16, join_contiguous=False):
         "2019b",
         "2020",
         "2021",
-        "2022",
     ] and is_scan_multiROI(file_info):
         scan = scans.ScanMultiROI(join_contiguous=join_contiguous)
+    elif version == "2023" and is_scan_multiROI(file_info):
+        scan = scans.ScanMultiROIPost2023(join_contiguous=join_contiguous)
     elif version in _scans:
         scan = _scans[version]()
     else:
