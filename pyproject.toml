@@ -25,7 +25,7 @@ dependencies = ["numpy>=1.12.0", "tifffile>=2019.2.22"]
 Homepage = "https://github.com/atlab/scanreader"
 
 [dependency-groups]
-dev = ["pytest>=8"]
+dev = ["pytest>=9.1.1"]
 
 [tool.setuptools]
 packages = ["scanreader"]
@@ -50,8 +50,12 @@ exclude-newer = "7 days"
 preview-features = ["audit-command"]
 
 [tool.pytest.ini_options]
-minversion = "8.0"
-addopts = ["-ra", "--strict-config", "--strict-markers"]
+minversion = "9.0"
+# pytest 9 requires TOML lists for args-type options.
+addopts = ["-ra", "--showlocals", "--strict-config", "--strict-markers", "--import-mode=importlib"]
+xfail_strict = true
+log_level = "INFO"
+filterwarnings = ["error"]
 # test_scanreader.py at the repo root is the legacy nose2 suite and needs large
 # TIFF files that are not in the repo; only collect the tests/ directory.
 testpaths = ["tests"]
@@ -63,18 +67,45 @@ line-length = 88
 extend-exclude = ["*.ipynb"]
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
+extend-select = [
+    "A",    # flake8-builtins: shadowing built-ins
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "T100", # leftover breakpoints / debugger calls
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "UP",   # pyupgrade
+    "C4",   # flake8-comprehensions
+]
 ignore = [
     # zip() without strict= : adding strict= would change runtime behavior
     # (raise on length mismatch) in code that currently truncates silently.
     "B905",
+    # Reference ignores: mixedCase class attrs, arg shadows builtin, non-lowercase local.
+    # Long lines are comments and messages in code that predates ruff; the
+    # formatter handles code wrapping.
+    "E501",
+    "N815",
+    "A002",
+    "N806",
 ]
 
 [tool.ruff.lint.per-file-ignores]
 # Re-export of the public API.
 "scanreader/__init__.py" = ["F401"]
-# Lambda defined in a loop but consumed within the same iteration (so the
-# late binding is harmless); unused enumerate index in a loop.
-"scanreader/scans.py" = ["E731", "B023", "B007"]
-# Legacy nose2 suite: unused enumerate indices.
-"test_scanreader.py" = ["B007"]
+# E731/B023: lambda defined in a loop but consumed within the same iteration (so
+# the late binding is harmless). B007: unused enumerate index in a loop.
+# N802: public method names (is_multiROI, is_slow_stack_with_fastZ) are API.
+# RUF046/SIM201: left as written; rewriting is not worth touching logic.
+"scanreader/scans.py" = ["E731", "B023", "B007", "N802"]
+"scanreader/multiroi.py" = ["RUF046", "SIM201"]
+# N802: public function name is_scan_multiROI is API.
+"scanreader/core.py" = ["N802"]
+# N818: ScanReaderException is a public exception name.
+"scanreader/exceptions.py" = ["N818"]
+# SIM103: left as written.
+"scanreader/utils.py" = ["SIM103"]
+# Legacy nose2 suite: unused enumerate indices, camelCase unittest-style helper.
+"test_scanreader.py" = ["B007", "N802"]
