@@ -39,3 +39,12 @@ As of this version, `scanreader` relies on [`tifffile`](https://pypi.org/project
 1. `scan = scanreader.read_scan(filename)` will create a list of `tifffile.TiffFile`s, one per each tiff file in the scan. This entails opening a file handle and reading the tags of the first page of each; tags for the rest of pages are ignored (they have the same info).
 2. `scan.num_frames`, `scan.shape` or another operation that requires the number of frames in the scan---which includes the first stage of any data loading operation---will need the number of pages in each tiff file. `tifffile` was designed for files with pages of varying shapes so it iterates over each page looking for its offset (number of bytes from the start of the file until the very first byte of the page), which it saves to use for reading. After this operation, it knows the number of pages per file.
 3. Once the file has been opened and the offset to each page has been calculated we can load the actual data. We load each page sequentially and take care of reformatting them to match the desired output.
+
+### Development
+```shell
+uv sync                  # create .venv with dev dependencies
+uv tool install prek     # or: pip install pre-commit
+prek install             # run the hooks on every commit
+prek run --all-files     # run all hooks once
+uv run pytest            # run tests (tests/ only; test_scanreader.py needs large TIFFs)
+```
