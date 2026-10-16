@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scanreader"
-version = "0.4.12"
+version = "0.4.13"
 description = "Reader for ScanImage 5 scans (including slow stacks and multiROI)."
 readme = "README.md"
 requires-python = ">=3.10"
